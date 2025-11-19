@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 // imported shared preferences package
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:todo_list/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'TODO list app'),
+      home: SplashScreen(),
     );
   }
 }
@@ -180,7 +181,15 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.blue, title: Text(widget.title)),
+      appBar: AppBar(backgroundColor: Color(0xFF03869F),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('TODO list app'),
+                  const SizedBox(width: 10),
+                  Image.asset('assets/images/logo.jpg', height: 40,),
+                ],
+              )),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -192,8 +201,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
@@ -203,7 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   child: const Text("All"),
                 ),
-                const SizedBox(width: 20),
+
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
@@ -213,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   child: const Text("Completed"),
                 ),
-                const SizedBox(width: 20),
+
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
@@ -223,41 +233,80 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   child: const Text("Pending"),
                 ),
+
+                // Elevated button to clear all the items at once
+
+                ElevatedButton(onPressed: () {
+                  setState(() {
+                    _allTodos.clear();
+                    _todos.clear();
+                  });
+                  saveTodos();
+                }, child: Text("Clear All")),
               ],
             ),
 
             const SizedBox(height: 20),
+
             Text(
               _currentLabel,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
+
+            const SizedBox(height: 20),
+
             Expanded(
               child: ListView.builder(
                 itemCount: _todos.length,
                 itemBuilder: (context, index) {
                   final todo = _todos[index];
 
-                  return Row(
-                    children: [
-                      Checkbox(
-                        value: todo.isDone,
-                        onChanged: (value) => toggleDone(todo.id),
-                      ),
-                      Expanded(
-                        child: Text(
-                          todo.text,
-                          style: TextStyle(
-                            decoration: todo.isDone
-                                ? TextDecoration.lineThrough
-                                : null,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => deleteTodo(todo.id),
-                        icon: const Icon(Icons.delete, color: Colors.black12,),
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(50),
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
                       ),
                     ],
+                  ),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: todo.isDone,
+                          onChanged: (value) => toggleDone(todo.id),
+                          activeColor: Color.fromARGB(246, 107, 78, 224),      
+                          checkColor: Colors.white, 
+                        ),
+                        Expanded(
+                          child: Text(
+                            todo.text,
+                            style: TextStyle(
+                              decoration: todo.isDone
+                                  ? TextDecoration.lineThrough
+                                  : null,
+                              color: Colors.black87,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 219, 140, 140),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: IconButton(
+                            onPressed: () => deleteTodo(todo.id),
+                            icon: const Icon(Icons.delete, color: Colors.black,),
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),

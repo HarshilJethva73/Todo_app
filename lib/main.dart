@@ -28,26 +28,14 @@ class Todo {
   final String text;
   bool isDone;
 
-  Todo({
-    required this.id,
-    required this.text,
-    this.isDone = false,
-  });
+  Todo({required this.id, required this.text, this.isDone = false});
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'text': text,
-      'isDone': isDone,
-    };
+    return {'id': id, 'text': text, 'isDone': isDone};
   }
 
   static Todo fromMap(Map<String, dynamic> map) {
-    return Todo(
-      id: map['id'],
-      text: map['text'],
-      isDone: map['isDone'],
-    );
+    return Todo(id: map['id'], text: map['text'], isDone: map['isDone']);
   }
 }
 
@@ -60,8 +48,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Todo> _todos = [];  
-  List<Todo> _allTodos = [];  
+  List<Todo> _todos = [];
+  List<Todo> _allTodos = [];
+  String _currentLabel = "All Todo's";
 
   @override
   void initState() {
@@ -85,8 +74,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> saveTodos() async {
     final prefs = await SharedPreferences.getInstance();
-    List<Map<String, dynamic>> mapList =
-        _allTodos.map((todo) => todo.toMap()).toList();
+    List<Map<String, dynamic>> mapList = _allTodos
+        .map((todo) => todo.toMap())
+        .toList();
 
     await prefs.setString("todos", jsonEncode(mapList));
   }
@@ -133,50 +123,58 @@ class _MyHomePageState extends State<MyHomePage> {
   void showAddTodoDialog() {
     TextEditingController controller = TextEditingController();
 
-   showDialog(
-  context: context,
-  builder: (context) {
-    return Dialog(
-      child: Container(
-        padding: const EdgeInsets.all(0),
-        width: 500,
-        height: 200,
-        child: AlertDialog(
-          insetPadding: EdgeInsets.zero,
-          contentPadding: const EdgeInsets.fromLTRB(4, 0, 4, 15),
-          titlePadding: const EdgeInsets.fromLTRB(4, 5, 4, 5),
-          actionsPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Container(
+            padding: const EdgeInsets.all(0),
+            width: 500,
+            height: 200,
+            child: AlertDialog(
+              insetPadding: EdgeInsets.zero,
+              contentPadding: const EdgeInsets.fromLTRB(4, 0, 4, 15),
+              titlePadding: const EdgeInsets.fromLTRB(4, 5, 4, 5),
+              actionsPadding: const EdgeInsets.symmetric(
+                horizontal: 5,
+                vertical: 0,
+              ),
 
-
-          title: const Text("Add Todo"),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(hintText: "Enter todo text"),
+              title: const Text("Add Todo"),
+              content: TextField(
+                controller: controller,
+                decoration: const InputDecoration(hintText: "Enter todo text"),
+              ),
+              actions: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    side: const BorderSide(color: Colors.black12, width: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    side: const BorderSide(color: Colors.black12, width: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    addTodo(controller.text);
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Add"),
+                ),
+              ],
+            ),
           ),
-          actions: [
-            TextButton(
-                style: TextButton.styleFrom(
-                  side: const BorderSide(color: Colors.black12, width: 2),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),),),
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-                style: TextButton.styleFrom(
-                side: const BorderSide(color: Colors.black12, width: 2),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),),),
-              onPressed: () {
-                addTodo(controller.text);
-                Navigator.pop(context);
-              },
-              child: const Text("Add"),
-            ),
-          ],
-        ),
-      ),
+        );
+      },
     );
-  },
-);
   }
 
   @override
@@ -198,23 +196,30 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    setState(() => _todos = List.from(_allTodos));
+                    setState(() {
+                      _todos = List.from(_allTodos);
+                      _currentLabel = "All Todo's";
+                    });
                   },
                   child: const Text("All"),
                 ),
                 const SizedBox(width: 20),
                 ElevatedButton(
                   onPressed: () {
-                    setState(() =>
-                        _todos = _allTodos.where((t) => t.isDone).toList());
+                    setState(() {
+                      _todos = _allTodos.where((t) => t.isDone).toList();
+                      _currentLabel = "Completed ✔";
+                    });
                   },
                   child: const Text("Completed"),
                 ),
                 const SizedBox(width: 20),
                 ElevatedButton(
                   onPressed: () {
-                    setState(() =>
-                        _todos = _allTodos.where((t) => !t.isDone).toList());
+                    setState(() {
+                      _todos = _allTodos.where((t) => !t.isDone).toList();
+                      _currentLabel = "Pending ⏳";
+                    });
                   },
                   child: const Text("Pending"),
                 ),
@@ -222,9 +227,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
 
             const SizedBox(height: 20),
-            const Text("All Todo's",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-
+            Text(
+              _currentLabel,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            ),
             Expanded(
               child: ListView.builder(
                 itemCount: _todos.length,
@@ -249,20 +255,20 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       IconButton(
                         onPressed: () => deleteTodo(todo.id),
-                        icon: const Icon(Icons.delete),
-                      )
+                        icon: const Icon(Icons.delete, color: Colors.black12,),
+                      ),
                     ],
                   );
                 },
               ),
-            )
+            ),
           ],
         ),
       ),
 
       floatingActionButton: FloatingActionButton(
         onPressed: showAddTodoDialog,
-        child: const Icon(Icons.add), 
+        child: const Icon(Icons.add),
       ),
     );
   }

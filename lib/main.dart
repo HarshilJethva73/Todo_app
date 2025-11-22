@@ -52,6 +52,8 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Todo> _todos = [];
   List<Todo> _allTodos = [];
   String _currentLabel = "All Todo's";
+  Color _currentColor = Color(0xFF6A4CE6);
+  String _activeFilter = "All";
 
   @override
   void initState() {
@@ -181,15 +183,16 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Color(0xFF03869F),
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('TODO list app'),
-                  const SizedBox(width: 10),
-                  Image.asset('assets/images/logo.jpg', height: 40,),
-                ],
-              )),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF03869F),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('TODO list app', style: TextStyle(color: Colors.white, fontSize: 25),),
+            Image.asset('assets/images/logo.jpg', height: 40),
+          ],
+        ),
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -203,46 +206,83 @@ class _MyHomePageState extends State<MyHomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-
                 ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                      _activeFilter == "All" ? Color(0xFF6A4CE6) : Colors.white,
+                    ),
+                    foregroundColor: WidgetStateProperty.all(
+                      _activeFilter == "All" ? Colors.white : Colors.black,
+                    ),
+                  ),
                   onPressed: () {
                     setState(() {
                       _todos = List.from(_allTodos);
                       _currentLabel = "All Todo's";
+                      _currentColor = Color(0xFF6A4CE6);
+                      _activeFilter = "All";
                     });
                   },
                   child: const Text("All"),
                 ),
 
                 ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                      _activeFilter == "Completed"
+                          ? Color(0xFF6A4CE6)
+                          : Colors.white,
+                    ),
+                    foregroundColor: WidgetStateProperty.all(
+                      _activeFilter == "Completed"
+                          ? Colors.white
+                          : Colors.black,
+                    ),
+                  ),
                   onPressed: () {
                     setState(() {
                       _todos = _allTodos.where((t) => t.isDone).toList();
                       _currentLabel = "Completed ✔";
+                      _currentColor = Color(0xFF6A4CE6);
+                      _activeFilter = "Completed";
                     });
                   },
                   child: const Text("Completed"),
                 ),
 
                 ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                      _activeFilter == "Pending"
+                          ? Color(0xFF6A4CE6)
+                          : Colors.white,
+                    ),
+                    foregroundColor: WidgetStateProperty.all(
+                      _activeFilter == "Pending" ? Colors.white : Colors.black,
+                    ),
+                  ),
                   onPressed: () {
                     setState(() {
                       _todos = _allTodos.where((t) => !t.isDone).toList();
                       _currentLabel = "Pending ⏳";
+                      _currentColor = Color(0xFF6A4CE6);
+                      _activeFilter = "Pending";
                     });
                   },
                   child: const Text("Pending"),
                 ),
 
                 // Elevated button to clear all the items at once
-
-                ElevatedButton(onPressed: () {
-                  setState(() {
-                    _allTodos.clear();
-                    _todos.clear();
-                  });
-                  saveTodos();
-                }, child: Text("Clear All")),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _allTodos.clear();
+                      _todos.clear();
+                    });
+                    saveTodos();
+                  },
+                  child: Text("Clear All"),
+                ),
               ],
             ),
 
@@ -261,27 +301,30 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemBuilder: (context, index) {
                   final todo = _todos[index];
 
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withAlpha(50),
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
+                  return Container(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withAlpha(50),
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
                     child: Row(
                       children: [
                         Checkbox(
                           value: todo.isDone,
                           onChanged: (value) => toggleDone(todo.id),
-                          activeColor: Color.fromARGB(246, 107, 78, 224),      
-                          checkColor: Colors.white, 
+                          activeColor: Color.fromARGB(246, 107, 78, 224),
+                          checkColor: Colors.white,
                         ),
                         Expanded(
                           child: Text(
@@ -302,7 +345,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           child: IconButton(
                             onPressed: () => deleteTodo(todo.id),
-                            icon: const Icon(Icons.delete, color: Colors.black,),
+                            icon: const Icon(Icons.delete, color: Colors.black),
                           ),
                         ),
                       ],

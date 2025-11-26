@@ -32,8 +32,8 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Center(child: Image.asset('assets/images/logo.jpg', height: 40)),
-            const SizedBox(height: 40),
+            Center(child: Image.asset('assets/images/logo.jpg', height: 70)),
+            const SizedBox(height: 30),
             Text(
               "Listly",
               style: TextStyle(

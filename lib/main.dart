@@ -189,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Listly', style: TextStyle(color: Colors.white, fontSize: 25),),
-            Image.asset('assets/images/logo.jpg', height: 40),
+            Image.asset('assets/images/logo.jpg', height: 50),
           ],
         ),
       ),

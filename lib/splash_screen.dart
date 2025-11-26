@@ -35,10 +35,19 @@ class _SplashScreenState extends State<SplashScreen> {
             Center(child: Image.asset('assets/images/logo.jpg', height: 40)),
             const SizedBox(height: 40),
             Text(
-              "TODO List App",
+              "Listly",
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 24,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "TO-DO APP",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),

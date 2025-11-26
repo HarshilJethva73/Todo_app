@@ -188,7 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('TODO list app', style: TextStyle(color: Colors.white, fontSize: 25),),
+            Text('Listly', style: TextStyle(color: Colors.white, fontSize: 25),),
             Image.asset('assets/images/logo.jpg', height: 40),
           ],
         ),
